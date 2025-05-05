@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 13:17:12 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/04 19:22:41 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/05 15:07:12 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,22 +81,22 @@ void move_player(t_player *player)
 
     if (player->key_w)
     {
-        player->x -= cos_angle * move;
-        player->y -= sin_angle * move;
-    }
-    if (player->key_s)
-    {
         player->x += cos_angle * move;
         player->y += sin_angle * move;
     }
-    if (player->key_a)
+    if (player->key_s)
     {
-        player->x -= sin_angle * move;
-        player->y += cos_angle * move;
+        player->x -= cos_angle * move;
+        player->y -= sin_angle * move;
     }
-    if (player->key_d)
+    if (player->key_a)
     {
         player->x += sin_angle * move;
         player->y -= cos_angle * move;
+    }
+    if (player->key_d)
+    {
+        player->x -= sin_angle * move;
+        player->y += cos_angle * move;
     }
 }

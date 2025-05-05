@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:37:58 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/05 12:08:33 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/05 15:04:26 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,15 @@ bool    it_s_a_wall(float px,float py,t_mlx *mlx)
     else 
         return(false);
 }
-void    draw_angle_view(t_mlx  *mlx,float   start_ray)
+float   get_distance(float px,float py,float rx,float ry)
+{
+    float d = 0;
+    float dilta_x = (rx - px) * (rx - px);
+    float dilta_y = (ry - py) * (ry - py);
+    d = sqrt(dilta_x + dilta_y);
+    return(d);
+}
+void    draw_angle_view(t_mlx  *mlx,float   start_ray,int i)
 {
     float cos_angle;
     float sin_angle;
@@ -112,26 +120,35 @@ void    draw_angle_view(t_mlx  *mlx,float   start_ray)
     ray_y = mlx->player.y;
     cos_angle = cos(start_ray);
     sin_angle = sin(start_ray);
-    while(it_s_a_wall(ray_x,ray_y,mlx) != true)
+    while(it_s_a_wall(ray_x,ray_y,mlx ) != true)
     {
-        put_pixel((int)ray_x, (int)ray_y,mlx,0xFF0000);
+        //put_pixel((int)ray_x, (int)ray_y,mlx,0xFF0000);
         ray_x += cos_angle;
         ray_y += sin_angle;
-    } 
+    }
+    float d = get_distance(mlx->player.x,mlx->player.y,ray_x,ray_y) * cos(start_ray - mlx->player.angle);
+    float h = (BLOCK_SIZE / d) * (WIDTH / 2);
+    int start_wall = (HEIGHT - h) / 2;
+    int end_wall = start_wall + h;
+    while(start_wall < end_wall)
+    {
+        put_pixel(i,start_wall,mlx,0x0000F0);
+        start_wall++;
+    }
 }
 int   check_update(void *ml)
 {
     t_mlx *mlx = (t_mlx *)ml;
-    float   angle_b_two_rays = M_PI / 3 / 1000;
+    float   angle_b_two_rays = M_PI / 3 / WIDTH;
     float   start_ray = mlx->player.angle - (M_PI / 6);
     int i = 0;
     move_player(&mlx->player);
     clean_image(mlx);
-    draw_map(mlx);
-    draw_square(mlx->player.x,mlx->player.y,10,0xFF0000,mlx);
+    // draw_map(mlx);
+    // draw_square(mlx->player.x,mlx->player.y,10,0xFF0000,mlx);
     while(i < WIDTH)
     {
-        draw_angle_view(mlx,start_ray);
+        draw_angle_view(mlx,start_ray,i);
         start_ray += angle_b_two_rays;
         i++;
     }

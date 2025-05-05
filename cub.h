@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:38:53 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/05 11:02:48 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/05 13:12:28 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 #define PLAYER_SIZE 20
 #define BLOCK_SIZE 50
 // wind mlx
-# define WIDTH 755
-# define HEIGHT 550
+# define WIDTH 800
+# define HEIGHT 800
 
 // keybord
 # define A 0
