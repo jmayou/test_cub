@@ -29,6 +29,7 @@ void    init_player(t_player *player)
 
 int    keyboard_on(int key,void *playe)
 {
+    // printf("key: %d\n", key);
     t_player *player = (t_player *)playe;
     if(key == A)
         player->key_a = true;
@@ -63,12 +64,14 @@ int    keyboard_off(int key,void *playe)
     return(0);
 }
 
-void move_player(t_player *player)
+void move_player(t_player *player,t_mlx *mlx)
 {
-    int move = 3;
+    int move = PLAYER_SPEED;
     float angle_move = 0.03;
     float cos_angle = cos(player->angle);
     float sin_angle = sin(player->angle);
+    float new_x = player->x;
+    float new_y = player->y;
 
     if (player->key_left)
         player->angle -= angle_move;
@@ -79,24 +82,29 @@ void move_player(t_player *player)
     if (player->angle < 0)
         player->angle =  2 * M_PI;
 
+
     if (player->key_w)
     {
-        player->x += cos_angle * move;
-        player->y += sin_angle * move;
+        new_x += cos_angle * move;
+        new_y += sin_angle * move;
     }
     if (player->key_s)
     {
-        player->x -= cos_angle * move;
-        player->y -= sin_angle * move;
+        new_x -= cos_angle * move;
+        new_y -= sin_angle * move;
     }
     if (player->key_a)
     {
-        player->x += sin_angle * move;
-        player->y -= cos_angle * move;
+        new_x += sin_angle * move;
+        new_y -= cos_angle * move;
     }
     if (player->key_d)
     {
-        player->x -= sin_angle * move;
-        player->y += cos_angle * move;
+        new_x -= sin_angle * move;
+        new_y += cos_angle * move;
     }
+    if(!it_s_a_wall(new_x,player->y,mlx))
+        player->x = new_x;
+    if(!it_s_a_wall(player->x,new_y,mlx))
+        player->y = new_y;
 }
