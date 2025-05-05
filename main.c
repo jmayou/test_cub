@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:37:58 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/05 10:57:12 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/05 12:08:33 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,43 +102,54 @@ bool    it_s_a_wall(float px,float py,t_mlx *mlx)
     else 
         return(false);
 }
-
-int   check_update(void *ml)
+void    draw_angle_view(t_mlx  *mlx,float   start_ray)
 {
-    t_mlx *mlx = (t_mlx *)ml;
     float cos_angle;
     float sin_angle;
     float ray_x;
     float ray_y;
+    ray_x = mlx->player.x;
+    ray_y = mlx->player.y;
+    cos_angle = cos(start_ray);
+    sin_angle = sin(start_ray);
+    while(it_s_a_wall(ray_x,ray_y,mlx) != true)
+    {
+        put_pixel((int)ray_x, (int)ray_y,mlx,0xFF0000);
+        ray_x += cos_angle;
+        ray_y += sin_angle;
+    } 
+}
+int   check_update(void *ml)
+{
+    t_mlx *mlx = (t_mlx *)ml;
+    float   angle_b_two_rays = M_PI / 3 / 1000;
+    float   start_ray = mlx->player.angle - (M_PI / 6);
+    int i = 0;
     move_player(&mlx->player);
     clean_image(mlx);
     draw_map(mlx);
-    draw_square(mlx->player.x,mlx->player.y,20,0xFF0000,mlx);
-    ray_x = mlx->player.x;
-    ray_y = mlx->player.y;
-    cos_angle = cos(mlx->player.angle);
-    sin_angle = sin(mlx->player.angle);
-    while(it_s_a_wall(ray_x,ray_y,mlx) != true)
+    draw_square(mlx->player.x,mlx->player.y,10,0xFF0000,mlx);
+    while(i < WIDTH)
     {
-        put_pixel(ray_x,ray_y,mlx,0xFF0000);
-        ray_x += cos_angle;
-        ray_y += sin_angle;
-    }    
+        draw_angle_view(mlx,start_ray);
+        start_ray += angle_b_two_rays;
+        i++;
+    }
     mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
     return(0);
 }
 
 char **mapp(void)
 {
-    char **map = malloc(sizeof(char *) * 11 + 1);
+    char **map = malloc(sizeof(char *) * (11 + 1));
     map[0] = "111111111111111";
     map[1] = "100000000000001";
     map[2] = "100000000000001";
-    map[3] = "100000100000001";
+    map[3] = "100000010000001";
     map[4] = "100000000000001";
-    map[5] = "100000010000001";
-    map[6] = "100001000000001";
-    map[7] = "100000000000001";
+    map[5] = "100000000000001";
+    map[6] = "100010000000001";
+    map[7] = "100000000010001";
     map[8] = "100000000000001";
     map[9] = "111111111111111";
     map[10] = NULL;
