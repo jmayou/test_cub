@@ -18,14 +18,21 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <math.h>
-
-#define PLAYER_SIZE 20
-#define BLOCK_SIZE 50
+#include <string.h>
+#define PLAYER_SIZE 1
+#define BLOCK_SIZE 20
 // wind mlx
-# define WIDTH 800
-# define HEIGHT 800
-
+# define WIDTH 1000
+# define HEIGHT 1000
+# define PLAYER_SPEED 1
 // keybord
+// linux
+// # define A 100
+// # define S 119
+// # define D 97
+// # define W 115
+// # define LEFT 65363
+// # define RIGHT 65361
 # define A 0
 # define S 1
 # define D 2
@@ -60,12 +67,15 @@ typedef struct s_mlx
 	int			endian;      // tarika d takhzin
     char    **map;
     t_player    player;
+    int    map_width;
+    int    map_height;
 } t_mlx;
 
 void    init_player(t_player *player);
 int    keyboard_on(int key,void *playe);
 int    keyboard_off(int key,void *playe);
-void    move_player(t_player *player);
+void    move_player(t_player *player,t_mlx *mlx);
+bool    it_s_a_wall(float px,float py,t_mlx *mlx);
 
 
 #endif
