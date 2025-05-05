@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:37:58 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/05 10:40:26 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/05 10:57:12 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ bool    it_s_a_wall(float px,float py,t_mlx *mlx)
     int x = px / BLOCK_SIZE;
     int y = py / BLOCK_SIZE;
 
-    if(mlx->map[x][y] == '1')
+    if(mlx->map[y][x] == '1')
         return(true);
     else 
         return(false);
@@ -112,8 +112,8 @@ int   check_update(void *ml)
     float ray_y;
     move_player(&mlx->player);
     clean_image(mlx);
-    draw_square(mlx->player.x,mlx->player.y,20,0xFF0000,mlx);
     draw_map(mlx);
+    draw_square(mlx->player.x,mlx->player.y,20,0xFF0000,mlx);
     ray_x = mlx->player.x;
     ray_y = mlx->player.y;
     cos_angle = cos(mlx->player.angle);
@@ -130,7 +130,7 @@ int   check_update(void *ml)
 
 char **mapp(void)
 {
-    char **map = malloc(sizeof(char *) * 11);
+    char **map = malloc(sizeof(char *) * 11 + 1);
     map[0] = "111111111111111";
     map[1] = "100000000000001";
     map[2] = "100000000000001";
