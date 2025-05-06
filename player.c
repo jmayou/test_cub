@@ -6,43 +6,78 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 13:17:12 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/05 15:07:12 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/06 17:20:27 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub.h"
 
-void    init_player(t_player *player)
+void set_player_start_from_map(t_mlx *mlx)
 {
-    player->x = WIDTH / 2;
-    player->y = HEIGHT / 2;
-    player->angle = M_PI / 2;
+    int y = 0;
+    while (mlx->map[y])
+    {
+        int x = 0;
+        while (mlx->map[y][x])
+        {
+            char c = mlx->map[y][x];
+            if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
+            {
+                mlx->player.x = x * BLOCK_SIZE + BLOCK_SIZE / 2; // * for trnsf from map to pexil + for player ykon f wsat bock
+                mlx->player.y = y * BLOCK_SIZE + BLOCK_SIZE / 2;
+                if (c == 'N')
+                    mlx->player.angle = 3 * M_PI / 2; // fo9
+                else if (c == 'S')
+                    mlx->player.angle = M_PI / 2;     // taht
+                else if (c == 'E')
+                    mlx->player.angle = 0;           // limn
+                else if (c == 'W')
+                    mlx->player.angle = M_PI;        // lisr
+                mlx->map[y][x] = '0'; // bax nrj3oha 3adia
+                return;
+            }
+            x++;
+        }
+        y++;
+    }
+}
+void    init_player(t_mlx *mlx)
+{
+    set_player_start_from_map(mlx);
+    mlx->player.key_left = false;
+    mlx->player.key_right = false;
     
-    player->key_left = false;
-    player->key_right = false;
-    
-    player->key_a = false;
-    player->key_w = false;
-    player->key_d = false;
-    player->key_s = false;
+    mlx->player.key_a = false;
+    mlx->player.key_w = false;
+    mlx->player.key_d = false;
+    mlx->player.key_s = false;
 }
 
-int    keyboard_on(int key,void *playe)
+int	close(t_mlx *mlx)
 {
-    // printf("key: %d\n", key);
-    t_player *player = (t_player *)playe;
+	exit(0);
+	mlx_destroy_image(mlx->mlx, mlx->img);
+	mlx_destroy_window(mlx->mlx, mlx->win);
+	return (0);
+}
+
+int    keyboard_on(int key,void *ml)
+{
+    t_mlx *mlx = (t_mlx *)ml;
     if(key == A)
-        player->key_a = true;
+        mlx->player.key_a = true;
     if(key == W)
-        player->key_w = true;
+        mlx->player.key_w = true;
     if(key == D)
-        player->key_d = true;
+        mlx->player.key_d = true;
     if(key == S)
-        player->key_s = true;
+        mlx->player.key_s = true;
     if(key == LEFT)
-        player->key_left = true;
+        mlx->player.key_left = true;
     if(key == RIGHT)
-        player->key_right = true; 
+        mlx->player.key_right = true; 
+    if(key == 53 || key == 17)
+        close(mlx);
     return(0);
 }
 

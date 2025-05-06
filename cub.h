@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:38:53 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/05 13:12:28 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/06 17:19:55 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,18 @@
 #define CUB_H
 
 #include <stdio.h>
-#include "mlx.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <mlx.h>
 #define PLAYER_SIZE 1
 #define BLOCK_SIZE 20
-// wind mlx
+
 # define WIDTH 1000
 # define HEIGHT 1000
 # define PLAYER_SPEED 1
-// keybord
-// linux
-// # define A 100
-// # define S 119
-// # define D 97
-// # define W 115
-// # define LEFT 65363
-// # define RIGHT 65361
+
 # define A 0
 # define S 1
 # define D 2
@@ -71,8 +64,9 @@ typedef struct s_mlx
     int    map_height;
 } t_mlx;
 
-void    init_player(t_player *player);
-int    keyboard_on(int key,void *playe);
+void    init_player(t_mlx *mlx);
+int	close(t_mlx *mlx);
+int    keyboard_on(int key,void *mlx);
 int    keyboard_off(int key,void *playe);
 void    move_player(t_player *player,t_mlx *mlx);
 bool    it_s_a_wall(float px,float py,t_mlx *mlx);
