@@ -2,13 +2,9 @@ NAME = cub3D
 
 CC = gcc
 
-CFLAGS =# -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror 
 
-# linux
-# MLX_FLAGS = -lmlx -lX11 -lXext -lbsd -lm
-# mac
 MLX_FLAGS = -lmlx -framework OpenGL -framework AppKit
-
 
 SRC = main.c player.c
 

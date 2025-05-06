@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:37:58 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/05 15:04:26 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/06 17:21:29 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,36 +161,6 @@ int   check_update(void *ml)
     return(0);
 }
 
-void set_player_start_from_map(t_mlx *mlx)
-{
-    int y = 0;
-    while (mlx->map[y])
-    {
-        int x = 0;
-        while (mlx->map[y][x])
-        {
-            char c = mlx->map[y][x];
-            if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
-            {
-                mlx->player.x = x * BLOCK_SIZE + BLOCK_SIZE / 2;
-                mlx->player.y = y * BLOCK_SIZE + BLOCK_SIZE / 2;
-                if (c == 'N')
-                    mlx->player.angle = 3 * M_PI / 2; // fo9
-                else if (c == 'S')
-                    mlx->player.angle = M_PI / 2;     // taht
-                else if (c == 'E')
-                    mlx->player.angle = 0;           // limn
-                else if (c == 'W')
-                    mlx->player.angle = M_PI;        // lisr
-                mlx->map[y][x] = '0'; // bax nrj3oha 3adia
-                return;
-            }
-            x++;
-        }
-    y++;
-}
-}
-
 char **mapp(t_mlx *mlx)
 {
     char **map = malloc(sizeof(char *) * (11 + 1));
@@ -222,14 +192,14 @@ int main()
 {
     t_mlx mlx;
     init(&mlx);
-    init_player(&mlx.player);
     mlx.map = mapp(&mlx);
-    set_player_start_from_map(&mlx);
+    init_player(&mlx);
     
-    mlx_hook(mlx.win,2,1L<<0,keyboard_on,&mlx.player);
-    mlx_hook(mlx.win, 3, 1L<<1, keyboard_off, &mlx.player);
+    mlx_hook(mlx.win,2,1L<<0,keyboard_on,&mlx);// why 2
+    mlx_hook(mlx.win, 3, 1L<<1, keyboard_off, &mlx.player); // 3
     mlx_loop_hook(mlx.mlx,check_update,&mlx);
-
+    // mlx_hook(mlx.win, 53, 0, close, &mlx);
+    // mlx_hook(mlx.win, 17, 0, close, &mlx);
     mlx_loop(mlx.mlx);
-    // mlx_loop(&mlx); // ma khdmlix f linux
+    
 }
