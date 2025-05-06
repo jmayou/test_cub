@@ -19,20 +19,27 @@
 #include <math.h>
 #include <string.h>
 #include <mlx.h>
+# include "../parsing/header.h"
 #define PLAYER_SIZE 1
 #define BLOCK_SIZE 20
 
-# define WIDTH 1000
-# define HEIGHT 1000
+# define WIDTH 2000
+# define HEIGHT 2000
 # define PLAYER_SPEED 1
 
-# define A 0
-# define S 1
-# define D 2
-# define W 13
-# define LEFT 123
-# define RIGHT 124
+//# define A 0
+//# define S 1
+//# define D 2
+//# define W 13
+//# define LEFT 123
+//# define RIGHT 124
 
+# define A 100
+# define S 119
+# define D 97
+# define W 115
+# define LEFT 65363
+# define RIGHT 65361
 typedef struct s_player
 {
     float   x;
@@ -62,14 +69,26 @@ typedef struct s_mlx
     t_player    player;
     int    map_width;
     int    map_height;
+    t_data *data;
 } t_mlx;
 
 void    init_player(t_mlx *mlx);
-int	close(t_mlx *mlx);
+int	    close_window(t_mlx *mlx);
 int    keyboard_on(int key,void *mlx);
 int    keyboard_off(int key,void *playe);
 void    move_player(t_player *player,t_mlx *mlx);
 bool    it_s_a_wall(float px,float py,t_mlx *mlx);
+void    init(t_mlx *mlx);
+void    put_pixel(int x,int y,t_mlx *mlx,int color);
+void    draw_square(int x, int y,int size,int color,t_mlx *mlx);
+void    clean_image(t_mlx *mlx);
+void    draw_map(t_mlx *mlx);
+float   get_distance(float px,float py,float rx,float ry);
+void    draw_angle_view(t_mlx  *mlx,float   start_ray,int i);
+int   check_update(void *ml);
+char    **mapp(t_mlx *mlx, t_data *data);
+int     map_height(char **map);
+int     map_width(char **map);
 
 
 #endif

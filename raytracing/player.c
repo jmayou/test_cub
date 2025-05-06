@@ -53,7 +53,7 @@ void    init_player(t_mlx *mlx)
     mlx->player.key_s = false;
 }
 
-int	close(t_mlx *mlx)
+int	close_window(t_mlx *mlx)
 {
 	exit(0);
 	mlx_destroy_image(mlx->mlx, mlx->img);
@@ -77,7 +77,7 @@ int    keyboard_on(int key,void *ml)
     if(key == RIGHT)
         mlx->player.key_right = true; 
     if(key == 53 || key == 17)
-        close(mlx);
+        close_window(mlx);
     return(0);
 }
 
