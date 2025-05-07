@@ -116,30 +116,57 @@ float   get_distance(float px,float py,float rx,float ry)
     d = sqrt(dilta_x + dilta_y);
     return(d);
 }
-void    draw_angle_view(t_mlx  *mlx,float   start_ray,int i)
+
+void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
 {
-    float cos_angle;
-    float sin_angle;
-    float ray_x;
-    float ray_y;
-    ray_x = mlx->player.x;
-    ray_y = mlx->player.y;
-    cos_angle = cos(start_ray);
-    sin_angle = sin(start_ray);
-    while(it_s_a_wall(ray_x,ray_y,mlx ) != true)
+    float ray_x = mlx->player.x;
+    float ray_y = mlx->player.y;
+    float cos_a = cos(ray_angle);
+    float sin_a = sin(ray_angle);
+    float step = 0.1;
+
+    // Move ray forward until it hits a wall
+    while (!it_s_a_wall(ray_x, ray_y, mlx))
     {
-        put_pixel((int)ray_x, (int)ray_y,mlx,0xFF0000);
-        ray_x += cos_angle;
-        ray_y += sin_angle;
+        ray_x += cos_a * step;
+        ray_y += sin_a * step;
     }
-    float d = get_distance(mlx->player.x,mlx->player.y,ray_x,ray_y) * cos(start_ray - mlx->player.angle);
-    float h = (BLOCK_SIZE / d) * (WIDTH / 2);
-    int start_wall = (HEIGHT - h) / 2;
-    int end_wall = start_wall + h;
-    while(start_wall < end_wall)
+
+    // rays
+    float mini_step = 1.0;
+    float map_ray_x = mlx->player.x;
+    float map_ray_y = mlx->player.y;
+    while (get_distance(map_ray_x, map_ray_y, ray_x, ray_y) > 1.0f)
     {
-        put_pixel(i,start_wall,mlx,0x0000F0);
-        start_wall++;
+        put_pixel(map_ray_x, map_ray_y, mlx, 0xFF0000); // green mini-ray
+        map_ray_x += cos_a * mini_step;
+        map_ray_y += sin_a * mini_step;
+    }
+
+    // Fisheye correction
+    float corrected_dist = get_distance(mlx->player.x, mlx->player.y, ray_x, ray_y)
+                           * cos(ray_angle - mlx->player.angle);
+
+    // Projection plane distance (based on 60° FOV)
+    float fov = M_PI / 3; // 60 degrees
+    float proj_plane_dist = (WIDTH / 2.0f) / tan(fov / 2.0f);
+
+    // Calculate projected wall height
+    float wall_height = (BLOCK_SIZE * proj_plane_dist) / corrected_dist;
+
+    int wall_start = (HEIGHT / 2) - (wall_height / 2);
+    int wall_end = wall_start + wall_height;
+
+    // Clamp to screen bounds
+    if (wall_start < 0) wall_start = 0;
+    if (wall_end > HEIGHT) wall_end = HEIGHT;
+
+    // Draw vertical wall slice
+    int y = wall_start;
+    while(y < wall_end)
+    {
+        put_pixel(column,y,mlx,0x0000F0);
+        y++;
     }
 }
 
@@ -189,10 +216,13 @@ int   check_update(void *ml)
     float   angle_b_two_rays = M_PI / 3 / WIDTH;
     float   start_ray = mlx->player.angle - (M_PI / 6);
     int i = 0;
+    (void)i;
+    (void)start_ray;
+    (void)angle_b_two_rays;
     move_player(&mlx->player,mlx);
-    // clean_image(mlx);
-    draw_sky(mlx);
-    draw_floor(mlx);
+    clean_image(mlx);
+    // draw_sky(mlx);
+    // draw_floor(mlx);
     draw_map(mlx);
     draw_square(mlx->player.x,mlx->player.y,10,0xFF0000,mlx);
     while(i < WIDTH)

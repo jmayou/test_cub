@@ -34,12 +34,12 @@
 # define LEFT 123
 # define RIGHT 124
 
-//# define A 100
-//# define S 119
-//# define D 97
-//# define W 115
-//# define LEFT 65363
-//# define RIGHT 65361
+// # define A 100
+// # define S 119
+// # define D 97
+// # define W 115
+// # define LEFT 65363
+// # define RIGHT 65361
 typedef struct s_player
 {
     float   x;
