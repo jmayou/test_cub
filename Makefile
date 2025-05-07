@@ -1,7 +1,7 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
-# MLX_FLAGS = -Lmlx -lmlx -framework OpenGL -framework AppKit
-MLX_FLAGS = -lmlx -lX11 -lXext -lbsd -lm
+MLX_FLAGS = -Lmlx -lmlx -framework OpenGL -framework AppKit
+# MLX_FLAGS = -lmlx -lX11 -lXext -lbsd -lm
 NAME = cub3D
 
 SRC_DIR = .
