@@ -120,8 +120,10 @@ bool    it_s_a_wall(float px,float py,t_mlx *mlx)
     int y = py / BLOCK_SIZE;
 
     // bax ma nfotoxi tol w l3ard
-    if (x < 0.5 || x >= mlx->map_width || y < 0 || y >= mlx->map_height)
+    if (x < 0  || x >= mlx->map_width || y < 0 || y >= mlx->map_height)
+    {
         return true;
+    }
 
     if(mlx->map[y][x] == '1')
         return(true);
@@ -146,9 +148,9 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
     float sin_a = sin(ray_angle);
     float prev_x = ray_x;
     float prev_y = ray_y;
-
-    (void)prev_y;
     // Cast the ray
+    (void)prev_x;
+    (void)prev_y;
     while (!it_s_a_wall(ray_x, ray_y, mlx))
     {
         prev_x = ray_x;
@@ -173,11 +175,6 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
 
     float wall_start = (HEIGHT / 2) - (wall_height / 2);
     float wall_end = wall_start + wall_height;
-
-    if (wall_start < 0)
-        wall_start = 0;
-    if (wall_end > HEIGHT)
-        wall_end = HEIGHT;
 
     // Pick texture based on hit direction
     t_texture *tex;
@@ -205,12 +202,21 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
     texture_x = texture_x * tex->width / BLOCK_SIZE;
 
     // Draw vertical line
-    float y = wall_start;
+    int y = wall_start;
     while (y < wall_end)
     {
-        float texture_y = (float)(y - wall_start) / (wall_end - wall_start) * tex->height;
-        int color = tex->adr[(int)texture_y * tex->width + texture_x];
-        put_pixel(column, y, mlx, color);
+        if(y > 0 && y < HEIGHT && column > 0 && column < WIDTH)
+        {
+            float texture_y = (float)(y - (int)wall_start) / (wall_end - wall_start) * tex->height;
+            if (tex->adr)
+            {
+                int color_pos = (int)texture_y * tex->width + texture_x;
+                if (color_pos >= tex->width * tex->height)
+                    color_pos = tex->width * tex->height;
+                int color = tex->adr[color_pos];
+                put_pixel(column, y, mlx, color);
+            }
+        }
         y++;
     }
 }
@@ -219,6 +225,25 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
 int rgb_to_int(int r, int g, int b)
 {
     return (r << 16 | g << 8 | b);
+}
+
+void    draw_world(t_mlx *mlx)
+{
+    int i = 0;
+    int j = 0;
+    while(i < WIDTH)
+    {
+        j = 0;
+        while(j < HEIGHT)
+        {
+            if (j < HEIGHT / 2)
+                put_pixel(i,j,mlx,0x019dde);
+            else
+                put_pixel(i,j,mlx,0x997663);
+            j++;
+        }
+        i++;
+    }
 }
 
 
@@ -233,6 +258,7 @@ int   check_update(void *ml)
     (void)angle_b_two_rays;
     move_player(&mlx->player,mlx);
     clean_image(mlx);
+    draw_world(mlx);
     while(i < WIDTH)
     {
         draw_angle_view(mlx,start_ray,i);

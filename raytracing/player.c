@@ -138,8 +138,8 @@ void move_player(t_player *player,t_mlx *mlx)
         new_x -= sin_angle * move;
         new_y += cos_angle * move;
     }
-    if(!it_s_a_wall(new_x,player->y,mlx))
+    if(!it_s_a_wall(new_x + SAFE_DISTANCE,player->y,mlx) && !it_s_a_wall(new_x - SAFE_DISTANCE,player->y,mlx))
         player->x = new_x;
-    if(!it_s_a_wall(player->x,new_y,mlx))
+    if(!it_s_a_wall(player->x,new_y + SAFE_DISTANCE,mlx) && !it_s_a_wall(player->x,new_y - SAFE_DISTANCE,mlx))
         player->y = new_y;
 }

@@ -34,9 +34,7 @@
 # define W 13
 # define LEFT 123
 # define RIGHT 124
-# define texture_width 64
-# define texture_height 64
-
+# define SAFE_DISTANCE 3
 // # define A 100
 // # define S 119
 // # define D 97
