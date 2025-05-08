@@ -11,7 +11,7 @@ int	main(int ac, char *av[])
 	if(data == NULL)
 		exit(1);
 	parsing(data ,ac ,av);
-    init(&mlx);
+    init(&mlx,data);
     mlx.map = mapp(&mlx, data);
     init_player(&mlx);    
     mlx_hook(mlx.win,2,1L<<0,keyboard_on,&mlx);// why 2

@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:38:53 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/06 17:19:55 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/08 11:49:06 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 # define W 13
 # define LEFT 123
 # define RIGHT 124
+# define texture_width 64;
+# define texture_height 64;
 
 // # define A 100
 // # define S 119
@@ -67,6 +69,16 @@ typedef struct s_mlx
 	int			endian;      // tarika d takhzin
     char    **map;
     t_player    player;
+    //
+    char *no_texture_path;
+    char *so_texture_path;
+    char *we_texture_path;
+    char *ea_texture_path;
+    unsigned int *no_texture;
+    unsigned int *so_texture;
+    unsigned int *we_texture;
+    unsigned int *ea_texture;
+    //
     int    map_width;
     int    map_height;
     t_data *data;
@@ -78,7 +90,7 @@ int    keyboard_on(int key,void *mlx);
 int    keyboard_off(int key,void *playe);
 void    move_player(t_player *player,t_mlx *mlx);
 bool    it_s_a_wall(float px,float py,t_mlx *mlx);
-void    init(t_mlx *mlx);
+void    init(t_mlx *mlx,t_data *data);
 void    put_pixel(int x,int y,t_mlx *mlx,int color);
 void    draw_square(int x, int y,int size,int color,t_mlx *mlx);
 void    clean_image(t_mlx *mlx);
