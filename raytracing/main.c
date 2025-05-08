@@ -6,34 +6,61 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:37:58 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/08 14:21:30 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/08 19:21:03 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub.h"
 #include "../parsing/header.h"
 
-unsigned int *load_texture(void *mlx, char *filename, int width, int height) 
+// unsigned int *load_texture(void *mlx, char *filename, int width, int height) 
+// {
+//     void *img = mlx_xpm_file_to_image(mlx, filename, &width, &height);
+//     if (!img) {
+//         return NULL;
+//     }
+//     char *addr;
+//     int bits_per_pixel;
+//     int lne_length;
+//     int endian;
+//     addr = mlx_get_data_addr(img, &bits_per_pixel,&lne_length, &endian);
+//     unsigned int *texture = malloc((width) * (height) * sizeof(unsigned int));
+//     for (int y = 0; y < height; y++) {
+//         for (int x = 0; x < width; x++) {
+//             unsigned int color = *(unsigned int *)(addr + (y * lne_length + x * (bits_per_pixel / 8)));
+//             texture[y * width + x] = color;
+//         }
+//     }
+//     mlx_destroy_image(mlx, img);
+//     return texture;
+// }
+
+t_texture	*load_texture(const char *path, void *mlx)
 {
-    void *img = mlx_xpm_file_to_image(mlx, filename, &width, &height);
-    if (!img) {
-        return NULL;
-    }
-    char *addr;
-    int bits_per_pixel;
-    int lne_length;
-    int endian;
-    addr = mlx_get_data_addr(img, &bits_per_pixel,&lne_length, &endian);
-    unsigned int *texture = malloc((width) * (height) * sizeof(unsigned int));
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            unsigned int color = *(unsigned int *)(addr + (y * lne_length + x * (bits_per_pixel / 8)));
-            texture[y * width + x] = color;
-        }
-    }
-    mlx_destroy_image(mlx, img);
-    return texture;
+	t_texture	*texture;
+	int			bpp;
+	int			size_line;
+	int			endian;
+
+	texture = malloc(sizeof(t_texture));
+	if (!texture)
+	{
+		printf("Error: malloc failed\n");
+		exit(1);
+	}
+
+	texture->img = mlx_xpm_file_to_image(mlx, (char *)path, &texture->width, &texture->height);
+	if (!texture->img)
+	{
+		printf("Error: Failed to load image: %s\n", path);
+		free(texture);
+		exit(1);
+	}
+
+	texture->adr = (uint32_t *)mlx_get_data_addr(texture->img, &bpp, &size_line, &endian);
+	return (texture);
 }
+
 
 void    init(t_mlx *mlx,t_data *data)
 {
@@ -48,10 +75,10 @@ void    init(t_mlx *mlx,t_data *data)
     mlx->so_texture_path = strdup("./textures/test_so.xpm");
     mlx->we_texture_path = strdup("./textures/test_we.xpm");
     mlx->ea_texture_path = strdup("./textures/test_ea.xpm");
-    mlx->no_texture = load_texture(mlx,mlx->no_texture_path, 64, 64);
-    mlx->so_texture = load_texture(mlx,mlx->so_texture_path, 64, 64);
-    mlx->we_texture = load_texture(mlx,mlx->we_texture_path, 64, 64);
-    mlx->ea_texture = load_texture(mlx,mlx->ea_texture_path, 64, 64);
+    mlx->no_texture = load_texture(mlx->no_texture_path,mlx->mlx);
+    mlx->so_texture = load_texture(mlx->so_texture_path,mlx->mlx);
+    mlx->we_texture = load_texture(mlx->we_texture_path,mlx->mlx);
+    mlx->ea_texture = load_texture(mlx->ea_texture_path,mlx->mlx);
 }
 void    put_pixel(int x,int y,t_mlx *mlx,int color)
 {
@@ -175,21 +202,23 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column) {
     if (wall_end > HEIGHT) wall_end = HEIGHT;
 
     unsigned int *texture;
+    t_texture *tex;
     if (ray_angle > M_PI / 2 && ray_angle < 3 * M_PI / 2) {
-        texture = mlx->no_texture;
+        tex = mlx->no_texture;
     } else if ((ray_angle > 0 && ray_angle < M_PI / 2) || (ray_angle > 3 * M_PI / 2 && ray_angle < 2 * M_PI)) {
-        texture = mlx->so_texture;
+        tex = mlx->so_texture;
     } else if (ray_angle > M_PI && ray_angle < 3 * M_PI / 2) {
-        texture = mlx->we_texture;
+        tex = mlx->we_texture;
     } else {
-        texture = mlx->ea_texture;
+        tex = mlx->ea_texture;
     }
+    texture = tex->adr;
+
     int y = wall_start;
     while (y < wall_end) {
-        float texture_y = (y - wall_start) / wall_height * 64;
-        float texture_x = (int)(ray_x / BLOCK_SIZE) % 64;
-        unsigned int texture_color = texture[(int)texture_y * 64 + (int)texture_x];
-    exit(1);
+        float texture_y = (y - wall_start) / wall_height * tex->height;
+        float texture_x = (int)(ray_x / BLOCK_SIZE) % tex->width;
+        unsigned int texture_color = texture[(int)texture_y * tex->width + (int)texture_x];
         put_pixel(column, y, mlx, texture_color);
         y++;
     }

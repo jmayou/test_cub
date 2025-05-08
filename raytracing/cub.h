@@ -6,7 +6,7 @@
 /*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 18:38:53 by jmayou            #+#    #+#             */
-/*   Updated: 2025/05/08 11:49:06 by jmayou           ###   ########.fr       */
+/*   Updated: 2025/05/08 19:00:48 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,14 @@ typedef struct s_player
     
 }t_player;
 
+typedef struct s_texture
+{
+	void		*img;
+	uint32_t	*adr;
+	int			width;
+	int			height;
+}	t_texture;
+
 typedef struct s_mlx
 {
     void *mlx;
@@ -74,10 +82,10 @@ typedef struct s_mlx
     char *so_texture_path;
     char *we_texture_path;
     char *ea_texture_path;
-    unsigned int *no_texture;
-    unsigned int *so_texture;
-    unsigned int *we_texture;
-    unsigned int *ea_texture;
+    t_texture *no_texture;
+    t_texture *so_texture;
+    t_texture *we_texture;
+    t_texture *ea_texture;
     //
     int    map_width;
     int    map_height;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fel-aziz <fel-aziz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmayou <jmayou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 08:57:41 by fel-aziz          #+#    #+#             */
-/*   Updated: 2025/05/05 19:29:08 by fel-aziz         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:16:07 by jmayou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,13 +237,13 @@ int valid_EA(char **line,t_data *data)
 		return(1);
 	}
 	tmp = ft_strtrim(line[1],"\n");
-	data->texture_fd = open(tmp,O_RDONLY);
-	if(data->texture_fd < 0)
-	{
-		ft_printf("error\nthe path of the textue is invalide\n");
-		return(1);
-	}
-	close(data->texture_fd);
+	// data->texture_fd = open(tmp,O_RDONLY);
+	// if(data->texture_fd < 0)
+	// {
+	// 	ft_printf("error\nthe path of the textue is invalide\n");
+	// 	return(1);
+	// }
+	// close(data->texture_fd);
 	free(tmp);
 	data->ea_set = true;
 	return(0);	
@@ -258,14 +258,14 @@ int valid_WE(char **line,t_data *data)
 	}
 	char *tmp;
 	tmp = ft_strtrim(line[1],"\n");
-	data->texture_fd = open(tmp,O_RDONLY);
-	if(data->texture_fd < 0)
-	{
-		ft_printf("error\nthe path of the textue is invalide\n");
+	// data->texture_fd = open(tmp,O_RDONLY);
+	// if(data->texture_fd < 0)
+	// {
+	// 	ft_printf("error\nthe path of the textue is invalide\n");
 	
-		return(1);
-	}
-	close(data->texture_fd);
+	// 	return(1);
+	// }
+	// close(data->texture_fd);
 	free(tmp);
 	data->we_set = true;
 	return(0);	
@@ -279,14 +279,14 @@ int valid_SO(char **line,t_data *data)
 	}
 	char *tmp;
 	tmp = ft_strtrim(line[1],"\n");
-	data->texture_fd = open(tmp,O_RDONLY);
-	if(data->texture_fd < 0)
-	{
-		ft_printf("error\nthe path of the textue is invalide\n");
+	// data->texture_fd = open(tmp,O_RDONLY);
+	// if(data->texture_fd < 0)
+	// {
+	// 	ft_printf("error\nthe path of the textue is invalide\n");
 	
-		return(1);
-	}
-	close(data->texture_fd);
+	// 	return(1);
+	// }
+	// close(data->texture_fd);
 	free(tmp);
 	data->so_set = true;
 	return(0);	
@@ -314,14 +314,14 @@ int valid_NO(char **line,t_data *data)
 	}
 	char *tmp;
 	tmp = ft_strtrim(line[1],"\n");
-	data->texture_fd = open(tmp,O_RDONLY);
-	if(data->texture_fd < 0)
-	{
-		ft_printf("error\nthe path of the textue is invalide\n");
-		// close(data->texture_fd);
-		// free;
-		return(1);
-	}
+	// data->texture_fd = open(tmp,O_RDONLY);
+	// if(data->texture_fd < 0)
+	// {
+	// 	ft_printf("error\nthe path of the textue is invalide\n");
+	// 	// close(data->texture_fd);
+	// 	// free;
+	// 	return(1);
+	// }
 	close(data->texture_fd);
 	free(tmp);
 	data->no_set = true;
