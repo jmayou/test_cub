@@ -49,7 +49,7 @@ void    init(t_mlx *mlx,t_data *data)
     mlx->addr = mlx_get_data_addr(mlx->img, &mlx->bits_per_pixel, &mlx->line_length, &mlx->endian);
     mlx->map_width = 0;
     mlx->map_height = 0;
-    mlx->no_texture_path = strdup("./textures/test_no.xpm");
+    mlx->no_texture_path = strdup("./textures/gg.xpm");
     mlx->so_texture_path = strdup("./textures/test_so.xpm");
     mlx->we_texture_path = strdup("./textures/test_we.xpm");
     mlx->ea_texture_path = strdup("./textures/test_ea.xpm");
@@ -139,6 +139,7 @@ float   get_distance(float px,float py,float rx,float ry)
     return(d);
 }
 
+// Updated draw_angle_view function with improved texture rendering
 void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
 {
     float ray_x = mlx->player.x;
@@ -148,9 +149,9 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
     float sin_a = sin(ray_angle);
     float prev_x = ray_x;
     float prev_y = ray_y;
-    // Cast the ray
     (void)prev_x;
     (void)prev_y;
+    // Cast the ray
     while (!it_s_a_wall(ray_x, ray_y, mlx))
     {
         prev_x = ray_x;
@@ -159,22 +160,46 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
         ray_y += sin_a * step;
     }
 
-
+    // Calculate exact hit position for precise texture mapping
+    float wall_x, wall_y;
+    int map_x = (int)(ray_x / BLOCK_SIZE);
+    int map_y = (int)(ray_y / BLOCK_SIZE);
+    
     // Determine which side of the wall was hit
     bool hit_vertical = false;
-    if(abs((int)ray_x / BLOCK_SIZE - (int)prev_x / BLOCK_SIZE) > 0)
+    if (abs((int)ray_x / BLOCK_SIZE - (int)prev_x / BLOCK_SIZE) > 0)
         hit_vertical = true;
+        
+    // Store the exact impact position
+    if (hit_vertical) {
+        wall_y = ray_y;
+        if (cos_a > 0) // Hit west face
+            wall_x = map_x * BLOCK_SIZE;
+        else // Hit east face
+            wall_x = (map_x + 1) * BLOCK_SIZE;
+    } else {
+        wall_x = ray_x;
+        if (sin_a > 0) // Hit north face
+            wall_y = map_y * BLOCK_SIZE;
+        else // Hit south face
+            wall_y = (map_y + 1) * BLOCK_SIZE;
+    }
 
-    // Correct fish-eye
-    float corrected_dist = get_distance(mlx->player.x, mlx->player.y, ray_x, ray_y)
+    // Correct fish-eye effect
+    float corrected_dist = get_distance(mlx->player.x, mlx->player.y, ray_x, ray_y) 
                             * cos(ray_angle - mlx->player.angle);
+    if (corrected_dist < 0.1)
+        corrected_dist = 0.1; // Prevent division by zero
 
+    // Calculate wall height
     float fov = M_PI / 3;
     float proj_plane_dist = (WIDTH / 2.0f) / tan(fov / 2.0f);
     float wall_height = (BLOCK_SIZE * proj_plane_dist) / corrected_dist;
 
+    // Calculate where to start and end drawing the wall
     float wall_start = (HEIGHT / 2) - (wall_height / 2);
     float wall_end = wall_start + wall_height;
+
 
     // Pick texture based on hit direction
     t_texture *tex;
@@ -193,33 +218,50 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
             tex = mlx->so_texture;
     }
 
-    // Texture X coordinate
-    int texture_x;
+    // Calculate texture X coordinate with more precision
+    float tex_x;
     if (hit_vertical)
-        texture_x = (int)ray_y % BLOCK_SIZE;
+        tex_x = wall_y - floor(wall_y / BLOCK_SIZE) * BLOCK_SIZE;
     else
-        texture_x = (int)ray_x % BLOCK_SIZE;
-    texture_x = texture_x * tex->width / BLOCK_SIZE;
+        tex_x = wall_x - floor(wall_x / BLOCK_SIZE) * BLOCK_SIZE;
+    
+    // Convert to texture coordinate space
+    tex_x = tex_x * tex->width / BLOCK_SIZE;
+    
+    // Ensure texture coordinate is within bounds
+    int texture_x = (int)tex_x % tex->width;
+    if (texture_x < 0)
+        texture_x += tex->width;
 
-    // Draw vertical line
-    int y = wall_start;
-    while (y < wall_end)
+    // Draw vertical wall slice
+    for (int y = wall_start; y < wall_end; y++)
     {
-        if(y > 0 && y < HEIGHT && column > 0 && column < WIDTH)
+        if (y > 0 && y < HEIGHT && column > 0 && column < WIDTH)
         {
-            float texture_y = (float)(y - (int)wall_start) / (wall_end - wall_start) * tex->height;
-            if (tex->adr)
+            // Calculate texture Y coordinate with proper scaling
+            float ratio = (y - wall_start) / (wall_end - wall_start);
+            int texture_y = ratio * tex->height;
+            
+            // Ensure texture coordinates are within bounds
+            if (texture_y < 0)
+                texture_y = 0;
+            if (texture_y >= tex->height)
+                texture_y = tex->height - 1;
+
+            // Calculate texture position
+            int tex_pos = texture_y * tex->width + texture_x;
+            
+            // Ensure we don't access outside the texture
+            if (tex_pos >= 0 && tex_pos < (tex->width * tex->height) && tex->adr)
             {
-                int color_pos = (int)texture_y * tex->width + texture_x;
-                if (color_pos >= tex->width * tex->height)
-                    color_pos = tex->width * tex->height;
-                int color = tex->adr[color_pos];
+                int color = tex->adr[tex_pos];
                 put_pixel(column, y, mlx, color);
             }
         }
-        y++;
     }
 }
+
+
 
 
 int rgb_to_int(int r, int g, int b)
