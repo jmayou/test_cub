@@ -20,6 +20,7 @@
 #include <string.h>
 #include <mlx.h>
 # include "../parsing/header.h"
+#include <stdint.h>
 #define PLAYER_SIZE 1
 #define BLOCK_SIZE 20
 
@@ -33,8 +34,8 @@
 # define W 13
 # define LEFT 123
 # define RIGHT 124
-# define texture_width 64;
-# define texture_height 64;
+# define texture_width 64
+# define texture_height 64
 
 // # define A 100
 // # define S 119
