@@ -1,10 +1,10 @@
 
-NO ./textures/test_no.png
-SO ./textures/test_so.png
-WE ./textures/test_we.png
-EA ./textures/test_ea.png
-F 220,100,0
-C 225,30,0
+NO ./textures/gg.xpm
+WE ./textures/test_we.xpm
+SO ./textures/test_so.xpm
+EA ./textures/test_ea.xpm
+F 0,0,225
+C 0,225,0
 
 
       1    

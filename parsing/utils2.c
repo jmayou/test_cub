@@ -37,7 +37,11 @@ t_identifiers	*ft_new_node(char *i, char *p, int *C,int *F)
 	if (newnode == NULL)
 		return (NULL);
 	newnode->identifier = i;
-	newnode->path = p;
+	if (p)
+	{
+		newnode->path = ft_strtrim(p, "\n");
+		free(p);
+	}
 	newnode->arg_C = C;
 	newnode->arg_F = F;
 	newnode->next = NULL;

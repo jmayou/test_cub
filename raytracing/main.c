@@ -49,10 +49,19 @@ void    init(t_mlx *mlx,t_data *data)
     mlx->addr = mlx_get_data_addr(mlx->img, &mlx->bits_per_pixel, &mlx->line_length, &mlx->endian);
     mlx->map_width = 0;
     mlx->map_height = 0;
-    mlx->no_texture_path = strdup("./textures/gg.xpm");
-    mlx->so_texture_path = strdup("./textures/test_so.xpm");
-    mlx->we_texture_path = strdup("./textures/test_we.xpm");
-    mlx->ea_texture_path = strdup("./textures/test_ea.xpm");
+    t_identifiers *id = data->ident;
+    while(id)
+    {
+        if (strcmp(id->identifier,"NO") == 0)
+            mlx->no_texture_path = strdup(id->path);
+        else if (strcmp(id->identifier,"SO") == 0)
+            mlx->so_texture_path = strdup(id->path);
+        else if (strcmp(id->identifier,"WE") == 0)
+            mlx->we_texture_path = strdup(id->path);
+        else if (strcmp(id->identifier,"EA") == 0)
+            mlx->ea_texture_path = strdup(id->path);
+        id = id->next;
+    }
     mlx->no_texture = load_texture(mlx->no_texture_path,mlx->mlx);
     mlx->so_texture = load_texture(mlx->so_texture_path,mlx->mlx);
     mlx->we_texture = load_texture(mlx->we_texture_path,mlx->mlx);
@@ -108,7 +117,7 @@ void    draw_map(t_mlx *mlx)
         while(mp[i][j])
         {
             if(mp[i][j] == '1')
-                draw_square(j * BLOCK_SIZE,i * BLOCK_SIZE,BLOCK_SIZE,0x0000F0,mlx);
+                draw_square(j * BLOCK_SIZE,i * BLOCK_SIZE,BLOCK_SIZE,0x000000,mlx);
             j++;
         }
         i++;
@@ -267,7 +276,7 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
     // Draw vertical wall slice
     for (int y = wall_start; y < wall_end; y++)
     {
-        if (y > 0 && y < HEIGHT && column > 0 && column < WIDTH)
+        if (y > 0 && y < HEIGHT && column >= 0 && column < WIDTH)
         {
             // Calculate texture Y coordinate with proper scaling
             float ratio = (y - wall_start) / (wall_end - wall_start);
@@ -304,15 +313,27 @@ void    draw_world(t_mlx *mlx)
 {
     int i = 0;
     int j = 0;
+    int sky_color;
+    int floor_color;
+    t_identifiers *id = mlx->data->ident;
+
+    while (id)
+    {
+        if (strcmp(id->identifier,"F") == 0)
+            floor_color = rgb_to_int(id->arg_F[0], id->arg_F[1], id->arg_F[2]);
+        else if (strcmp(id->identifier,"C") == 0)
+            sky_color = rgb_to_int(id->arg_C[0], id->arg_C[1], id->arg_C[2]);
+        id = id->next;
+    }
     while(i < WIDTH)
     {
         j = 0;
         while(j < HEIGHT)
         {
             if (j < HEIGHT / 2)
-                put_pixel(i,j,mlx,0x019dde);
+                put_pixel(i,j,mlx,floor_color);
             else
-                put_pixel(i,j,mlx,0x997663);
+                put_pixel(i,j,mlx,sky_color);
             j++;
         }
         i++;
