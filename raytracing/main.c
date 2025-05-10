@@ -125,6 +125,11 @@ bool    it_s_a_wall(float px,float py,t_mlx *mlx)
         return true;
     }
 
+    int row_len = ft_strlen(mlx->map[y]);
+    if (x >= row_len || mlx->map[y][x] == ' ' || mlx->map[y][x] == '\0')
+        return true;
+
+
     if(mlx->map[y][x] == '1')
         return(true);
     else 
@@ -196,6 +201,32 @@ void draw_angle_view(t_mlx *mlx, float ray_angle, int column)
     float proj_plane_dist = (WIDTH / 2.0f) / tan(fov / 2.0f);
     float wall_height = (BLOCK_SIZE * proj_plane_dist) / corrected_dist;
 
+/////////////////////////////////////////////////////////
+
+    // Draw minimap ray
+    int start_x = mlx->player.x;
+    int start_y = mlx->player.y;
+    int end_x = ray_x;
+    int end_y = ray_y;
+    
+    // Draw the ray line on minimap
+    float dx = end_x - start_x;
+    float dy = end_y - start_y;
+    float steps = fmax(fabs(dx), fabs(dy));
+    float x_inc = dx / steps;
+    float y_inc = dy / steps;
+    float x = start_x;
+    float y = start_y;
+    
+    for (int i = 0; i <= steps; i++) {
+        put_pixel(x, y, mlx, 0xFF0000); // Red color for rays
+        x += x_inc;
+        y += y_inc;
+    }
+
+
+
+/////////////////////////////////////////////////////////
     // Calculate where to start and end drawing the wall
     float wall_start = (HEIGHT / 2) - (wall_height / 2);
     float wall_end = wall_start + wall_height;
